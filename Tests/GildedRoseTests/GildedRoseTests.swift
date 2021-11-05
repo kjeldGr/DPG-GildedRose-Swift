@@ -39,7 +39,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 2)
     }
     
-    // MARK: - Aged brie
+    // MARK: - Quality Increasing Item
     
     func testAgedBrieQualityIncreases() {
         let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 0)
@@ -76,7 +76,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 50)
     }
     
-    // MARK: - Backstage passes
+    // MARK: - Expiring Item
     
     func testBackstagePassesQualityIncreases() {
         let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 11, quality: 0)
@@ -139,15 +139,39 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 50)
     }
     
-    // MARK: - Sulfuras
+    // MARK: - Legendary Item
     
     func testSulfurasQualityAndSellInDoesNotChange() {
-        let item = LegendaryItem(name: "Sulfuras, Hand of Ragnaros", sellIn: 10, quality: 80)
+        let item = LegendaryItem(name: "Sulfuras, Hand of Ragnaros", sellIn: 10)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
         XCTAssertEqual(item.sellIn, 10)
-        XCTAssertEqual(item.quality, 80)
+        XCTAssertEqual(item.quality, LegendaryItem.maxQuality)
+    }
+    
+    // MARK: - Conjured item
+    
+    func testConjuredItemQualityDecreases() {
+        let item = ConjuredItem(name: "Conjured Mana Cake", sellIn: 1, quality: 5)
+        let app = GildedRose(items: [item])
+        
+        app.updateQuality()
+        XCTAssertEqual(item.sellIn, 0)
+        XCTAssertEqual(item.quality, 3)
+    }
+    
+    func testConjuredItemQualityDecreasesTwiceAsFastAfterSellInDate() {
+        let item = ConjuredItem(name: "Conjured Mana Cake", sellIn: 1, quality: 6)
+        let app = GildedRose(items: [item])
+        
+        app.updateQuality()
+        XCTAssertEqual(item.sellIn, 0)
+        XCTAssertEqual(item.quality, 4)
+        
+        app.updateQuality()
+        XCTAssertEqual(item.sellIn, -1)
+        XCTAssertEqual(item.quality, 0)
     }
     
     // MARK: - XCTestCase

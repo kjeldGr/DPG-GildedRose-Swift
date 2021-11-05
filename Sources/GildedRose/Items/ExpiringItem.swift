@@ -1,7 +1,9 @@
 public final class ExpiringItem: Item, Updatable {
     
+    // MARK: - Updatable
+    
     var qualityUpdateValue: Int {
-        let maxQualityDiff = maxQuality - quality
+        let maxQualityDiff = Self.maxQuality - quality
         switch sellIn {
         case ..<0:
             return -quality
