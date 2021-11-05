@@ -4,6 +4,10 @@ public final class GildedRose {
     
     let items: [Item]
     
+    // MARK: - Private properties
+    
+    private let sellInUpdateValue: Int = -1
+    
     // MARK: - Initializers
     
     public init(items: [Item]) {
@@ -15,9 +19,10 @@ public final class GildedRose {
     public func updateQuality() {
         for item in items {
             guard let updatable = item as? Updatable else {
+                // Item is not updatable
                 continue
             }
-            item.sellIn += updatable.sellInUpdateValue
+            item.sellIn += sellInUpdateValue
             item.quality += updatable.qualityUpdateValue
         }
     }

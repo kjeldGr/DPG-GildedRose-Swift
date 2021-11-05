@@ -15,7 +15,18 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.name, app.items[0].name)
     }
     
-    // MARK: - Default item
+    // MARK: - Item
+    
+    func testSulfurasQualityAndSellInDoesNotChange() {
+        let item = Item(name: "Sulfuras, Hand of Ragnaros", sellIn: 10, quality: 80)
+        let app = GildedRose(items: [item])
+        
+        app.updateQuality()
+        XCTAssertEqual(item.sellIn, 10)
+        XCTAssertEqual(item.quality, 80)
+    }
+    
+    // MARK: - UpdatableItem
     
     func testDefaultItemQualityDecreases() {
         let item = UpdatableItem(name: "TestItem", sellIn: 1, quality: 5)
@@ -39,7 +50,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 2)
     }
     
-    // MARK: - Quality Increasing Item
+    // MARK: - QualityIncreasingItem
     
     func testAgedBrieQualityIncreases() {
         let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 0)
@@ -76,7 +87,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 50)
     }
     
-    // MARK: - Expiring Item
+    // MARK: - ExpiringItem
     
     func testBackstagePassesQualityIncreases() {
         let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 11, quality: 0)
@@ -139,18 +150,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 50)
     }
     
-    // MARK: - Legendary Item
-    
-    func testSulfurasQualityAndSellInDoesNotChange() {
-        let item = LegendaryItem(name: "Sulfuras, Hand of Ragnaros", sellIn: 10)
-        let app = GildedRose(items: [item])
-        
-        app.updateQuality()
-        XCTAssertEqual(item.sellIn, 10)
-        XCTAssertEqual(item.quality, LegendaryItem.maxQuality)
-    }
-    
-    // MARK: - Conjured item
+    // MARK: - ConjuredItem
     
     func testConjuredItemQualityDecreases() {
         let item = ConjuredItem(name: "Conjured Mana Cake", sellIn: 1, quality: 5)
