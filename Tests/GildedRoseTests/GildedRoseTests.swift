@@ -6,18 +6,49 @@ final class GildedRoseTests: XCTestCase {
     
     // MARK: - General tests
 
-    func testAppItems() {
-        let item = UpdatableItem(name: "TestItem", sellIn: 1, quality: 5)
-        let app = GildedRose(items: [item])
+    func testUpdateQuality() {
+        let item = Item(name: "TestItem", sellIn: 1, quality: 5)
+        let conjuredItem = ConjuredItem(name: "TestConjuredItem", sellIn: 1, quality: 5)
+        let expiringItem = ExpiringItem(name: "TestExpiringItem", sellIn: 1, quality: 5)
+        let qualityIncreasingItem = QualityIncreasingItem(name: "TestQualityIncreasingItem",
+                                                          sellIn: 1, quality: 5)
+        let updatableItem = UpdatableItem(name: "TestUpdatableItem", sellIn: 1, quality: 5)
         
+        let items = [item, conjuredItem, expiringItem, qualityIncreasingItem, updatableItem]
+        // Create a copy to compare item changes
+        let itemsCopy = NSArray(array: items, copyItems: true)
+            .compactMap({ $0 as? Item })
+        
+        let app = GildedRose(items: itemsCopy)
         app.updateQuality()
-        XCTAssertEqual(app.items.count, 1)
+        XCTAssertEqual(app.items.count, items.count)
+        
+        // Make sure non-updatable items are not updated
         XCTAssertEqual(item.name, app.items[0].name)
+        XCTAssertEqual(item.sellIn, app.items[0].sellIn)
+        XCTAssertEqual(items[0].quality, app.items[0].quality)
+        
+        // Make sure updatable items are updated
+        XCTAssertEqual(conjuredItem.name, app.items[1].name)
+        XCTAssertNotEqual(conjuredItem.sellIn, app.items[1].sellIn)
+        XCTAssertNotEqual(conjuredItem.quality, app.items[1].quality)
+        
+        XCTAssertEqual(expiringItem.name, app.items[2].name)
+        XCTAssertNotEqual(expiringItem.sellIn, app.items[2].sellIn)
+        XCTAssertNotEqual(expiringItem.quality, app.items[2].quality)
+        
+        XCTAssertEqual(qualityIncreasingItem.name, app.items[3].name)
+        XCTAssertNotEqual(qualityIncreasingItem.sellIn, app.items[3].sellIn)
+        XCTAssertNotEqual(qualityIncreasingItem.quality, app.items[3].quality)
+        
+        XCTAssertEqual(updatableItem.name, app.items[4].name)
+        XCTAssertNotEqual(updatableItem.sellIn, app.items[4].sellIn)
+        XCTAssertNotEqual(updatableItem.quality, app.items[4].quality)
     }
     
     // MARK: - Item
     
-    func testSulfurasQualityAndSellInDoesNotChange() {
+    func testItemQualityAndSellInDoesNotChange() {
         let item = Item(name: "Sulfuras, Hand of Ragnaros", sellIn: 10, quality: 80)
         let app = GildedRose(items: [item])
         
@@ -28,8 +59,8 @@ final class GildedRoseTests: XCTestCase {
     
     // MARK: - UpdatableItem
     
-    func testDefaultItemQualityDecreases() {
-        let item = UpdatableItem(name: "TestItem", sellIn: 1, quality: 5)
+    func testUpdatableItemQualityDecreases() {
+        let item = UpdatableItem(name: "TestUpdatableItem", sellIn: 1, quality: 5)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -37,8 +68,8 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 4)
     }
     
-    func testDefaultItemQualityDecreasesTwiceAsFastAfterSellInDate() {
-        let item = UpdatableItem(name: "TestItem", sellIn: 1, quality: 5)
+    func testUpdatableItemQualityDecreasesTwiceAsFastAfterSellInDate() {
+        let item = UpdatableItem(name: "TestUpdatableItem", sellIn: 1, quality: 5)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -52,7 +83,7 @@ final class GildedRoseTests: XCTestCase {
     
     // MARK: - QualityIncreasingItem
     
-    func testAgedBrieQualityIncreases() {
+    func testQualityIncreasingItemQualityIncreases() {
         let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 0)
         let app = GildedRose(items: [item])
         
@@ -61,7 +92,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 1)
     }
     
-    func testAgedBrieQualityIncreasesTwiceAsFastAfterSellInDate() {
+    func testQualityIncreasingItemQualityIncreasesTwiceAsFastAfterSellInDate() {
         let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 0)
         let app = GildedRose(items: [item])
         
@@ -74,7 +105,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 3)
     }
     
-    func testAgedBrieQualityDoesNotIncreaseAboveMaxValue() {
+    func testQualityIncreasingItemQualityDoesNotIncreaseAboveMaxValue() {
         let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 0, quality: 49)
         let app = GildedRose(items: [item])
         
@@ -89,7 +120,7 @@ final class GildedRoseTests: XCTestCase {
     
     // MARK: - ExpiringItem
     
-    func testBackstagePassesQualityIncreases() {
+    func testExpiringItemQualityIncreases() {
         let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 11, quality: 0)
         let app = GildedRose(items: [item])
         
@@ -98,7 +129,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 1)
     }
     
-    func testBackstagePassesQualityIncreasesTwiceAsFastWithTenDaysLeft() {
+    func testExpiringItemQualityIncreasesTwiceAsFastWithTenDaysLeft() {
         let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 10, quality: 0)
         let app = GildedRose(items: [item])
         
@@ -107,7 +138,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 2)
     }
     
-    func testBackstagePassesQualityIncreasesThreeTimesAsFastWithFiveDaysLeft() {
+    func testExpiringItemQualityIncreasesThreeTimesAsFastWithFiveDaysLeft() {
         let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 6, quality: 0)
         let app = GildedRose(items: [item])
         
@@ -120,7 +151,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 5)
     }
     
-    func testBackstagePassesQualityDropsToZeroAfterSellIn() {
+    func testExpiringItemQualityDropsToZeroAfterSellIn() {
         let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 2, quality: 0)
         let app = GildedRose(items: [item])
         
@@ -137,7 +168,7 @@ final class GildedRoseTests: XCTestCase {
         XCTAssertEqual(item.quality, 0)
     }
     
-    func testBackstagePassesQualityDoesNotIncreaseAboveMaxValue() {
+    func testExpiringItemQualityDoesNotIncreaseAboveMaxValue() {
         let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 6, quality: 49)
         let app = GildedRose(items: [item])
         
@@ -177,7 +208,19 @@ final class GildedRoseTests: XCTestCase {
     // MARK: - XCTestCase
 
     static var allTests = [
-        ("testAppItems", testAppItems),
-        ("testDefaultItemQualityDecreases", testDefaultItemQualityDecreases),
+        ("testUpdateQuality", testUpdateQuality),
+        ("testItemQualityAndSellInDoesNotChange", testItemQualityAndSellInDoesNotChange),
+        ("testUpdatableItemQualityDecreases", testUpdatableItemQualityDecreases),
+        ("testUpdatableItemQualityDecreasesTwiceAsFastAfterSellInDate", testUpdatableItemQualityDecreasesTwiceAsFastAfterSellInDate),
+        ("testQualityIncreasingItemQualityIncreases", testQualityIncreasingItemQualityIncreases),
+        ("testQualityIncreasingItemQualityIncreasesTwiceAsFastAfterSellInDate", testQualityIncreasingItemQualityIncreasesTwiceAsFastAfterSellInDate),
+        ("testQualityIncreasingItemQualityDoesNotIncreaseAboveMaxValue", testQualityIncreasingItemQualityDoesNotIncreaseAboveMaxValue),
+        ("testExpiringItemQualityIncreases", testExpiringItemQualityIncreases),
+        ("testExpiringItemQualityIncreasesTwiceAsFastWithTenDaysLeft", testExpiringItemQualityIncreasesTwiceAsFastWithTenDaysLeft),
+        ("testExpiringItemQualityIncreasesThreeTimesAsFastWithFiveDaysLeft", testExpiringItemQualityIncreasesThreeTimesAsFastWithFiveDaysLeft),
+        ("testExpiringItemQualityDropsToZeroAfterSellIn", testExpiringItemQualityDropsToZeroAfterSellIn),
+        ("testExpiringItemQualityDoesNotIncreaseAboveMaxValue", testExpiringItemQualityDoesNotIncreaseAboveMaxValue),
+        ("testConjuredItemQualityDecreases", testConjuredItemQualityDecreases),
+        ("testConjuredItemQualityDecreasesTwiceAsFastAfterSellInDate", testConjuredItemQualityDecreasesTwiceAsFastAfterSellInDate),
     ]
 }
