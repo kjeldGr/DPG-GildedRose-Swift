@@ -20,6 +20,8 @@ final class GildedRoseTests: XCTestCase {
             .compactMap({ $0 as? Item })
         
         let app = GildedRose(items: itemsCopy)
+        XCTAssertEqual(app.sellInUpdateValue, -1)
+        
         app.updateQuality()
         XCTAssertEqual(app.items.count, items.count)
         
