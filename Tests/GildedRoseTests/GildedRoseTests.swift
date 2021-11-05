@@ -64,15 +64,15 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testAgedBrieQualityDoesNotIncreaseAboveMaxValue() {
-        let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 49)
+        let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 0, quality: 49)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
-        XCTAssertEqual(item.sellIn, 0)
+        XCTAssertEqual(item.sellIn, -1)
         XCTAssertEqual(item.quality, 50)
         
         app.updateQuality()
-        XCTAssertEqual(item.sellIn, -1)
+        XCTAssertEqual(item.sellIn, -2)
         XCTAssertEqual(item.quality, 50)
     }
     
@@ -127,15 +127,15 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testBackstagePassesQualityDoesNotIncreaseAboveMaxValue() {
-        let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 5, quality: 49)
+        let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 6, quality: 49)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
-        XCTAssertEqual(item.sellIn, 4)
+        XCTAssertEqual(item.sellIn, 5)
         XCTAssertEqual(item.quality, 50)
         
         app.updateQuality()
-        XCTAssertEqual(item.sellIn, 3)
+        XCTAssertEqual(item.sellIn, 4)
         XCTAssertEqual(item.quality, 50)
     }
     
