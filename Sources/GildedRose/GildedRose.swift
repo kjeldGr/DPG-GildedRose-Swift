@@ -3,10 +3,7 @@ public final class GildedRose {
     // MARK: - Internal properties
     
     let items: [Item]
-    
-    // MARK: - Private properties
-    
-    private let sellInUpdateValue: Int = -1
+    let sellInUpdateValue: Int = -1
     
     // MARK: - Initializers
     
