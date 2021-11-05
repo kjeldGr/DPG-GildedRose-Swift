@@ -7,7 +7,7 @@ final class GildedRoseTests: XCTestCase {
     // MARK: - General tests
 
     func testAppItems() {
-        let item = Item(name: "TestItem", sellIn: 1, quality: 5)
+        let item = UpdatableItem(name: "TestItem", sellIn: 1, quality: 5)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -18,7 +18,7 @@ final class GildedRoseTests: XCTestCase {
     // MARK: - Default item
     
     func testDefaultItemQualityDecreases() {
-        let item = Item(name: "TestItem", sellIn: 1, quality: 5)
+        let item = UpdatableItem(name: "TestItem", sellIn: 1, quality: 5)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -27,7 +27,7 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testDefaultItemQualityDecreasesTwiceAsFastAfterSellInDate() {
-        let item = Item(name: "TestItem", sellIn: 1, quality: 5)
+        let item = UpdatableItem(name: "TestItem", sellIn: 1, quality: 5)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -42,7 +42,7 @@ final class GildedRoseTests: XCTestCase {
     // MARK: - Aged brie
     
     func testAgedBrieQualityIncreases() {
-        let item = Item(name: "Aged Brie", sellIn: 1, quality: 0)
+        let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 0)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -51,7 +51,7 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testAgedBrieQualityIncreasesTwiceAsFastAfterSellInDate() {
-        let item = Item(name: "Aged Brie", sellIn: 1, quality: 0)
+        let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 0)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -64,7 +64,7 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testAgedBrieQualityDoesNotIncreaseAboveMaxValue() {
-        let item = Item(name: "Aged Brie", sellIn: 1, quality: 49)
+        let item = QualityIncreasingItem(name: "Aged Brie", sellIn: 1, quality: 49)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -79,7 +79,7 @@ final class GildedRoseTests: XCTestCase {
     // MARK: - Backstage passes
     
     func testBackstagePassesQualityIncreases() {
-        let item = Item(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 11, quality: 0)
+        let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 11, quality: 0)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -88,7 +88,7 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testBackstagePassesQualityIncreasesTwiceAsFastWithTenDaysLeft() {
-        let item = Item(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 10, quality: 0)
+        let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 10, quality: 0)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -97,16 +97,20 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testBackstagePassesQualityIncreasesThreeTimesAsFastWithFiveDaysLeft() {
-        let item = Item(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 5, quality: 0)
+        let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 6, quality: 0)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
+        XCTAssertEqual(item.sellIn, 5)
+        XCTAssertEqual(item.quality, 2)
+        
+        app.updateQuality()
         XCTAssertEqual(item.sellIn, 4)
-        XCTAssertEqual(item.quality, 3)
+        XCTAssertEqual(item.quality, 5)
     }
     
     func testBackstagePassesQualityDropsToZeroAfterSellIn() {
-        let item = Item(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 2, quality: 0)
+        let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 2, quality: 0)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -123,7 +127,7 @@ final class GildedRoseTests: XCTestCase {
     }
     
     func testBackstagePassesQualityDoesNotIncreaseAboveMaxValue() {
-        let item = Item(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 5, quality: 49)
+        let item = ExpiringItem(name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 5, quality: 49)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
@@ -138,7 +142,7 @@ final class GildedRoseTests: XCTestCase {
     // MARK: - Sulfuras
     
     func testSulfurasQualityAndSellInDoesNotChange() {
-        let item = Item(name: "Sulfuras, Hand of Ragnaros", sellIn: 10, quality: 80)
+        let item = LegendaryItem(name: "Sulfuras, Hand of Ragnaros", sellIn: 10, quality: 80)
         let app = GildedRose(items: [item])
         
         app.updateQuality()
